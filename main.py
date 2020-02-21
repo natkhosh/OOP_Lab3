@@ -23,6 +23,5 @@ l1.insert(22, 0)
 print(l1, l1.str_size)
 
 
-
 l1.set_structure_driver(driver)
 l1.save()
