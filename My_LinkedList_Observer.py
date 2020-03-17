@@ -1,15 +1,22 @@
 from weakref import ref
+
 from structure_driver import *
+# IStructureDriver, JSONFileDriver
+from react import *
+# Observer, Data
 
 
-class Node:
+class Node(Data):
+
     def __init__(self, prev_node=None, next_node=None, data=None):
         """
-        Конструктор узла
-        :param prev_node: int or str
-        :param next_node: type(self)
-        :param data: type(self)
-        """
+           Конструктор узла
+           :param prev_node: int or str
+           :param next_node: type(self)
+           :param data: type(self)
+           """
+        super().__init__(data)
+
         if prev_node is not None and not isinstance(prev_node, type(self)):
             raise TypeError('prev_node must be Node or None')
 
@@ -18,14 +25,14 @@ class Node:
 
         self.prev_node = ref(prev_node) if prev_node is not None else None
         self.next_node = next_node
-        self.data = data
+        # self.data = data
 
     def __str__(self):
         return self.data
 
 
-class LinkedList:
-    def __init__(self, _structure_driver=None):
+class LinkedList(Observer):
+    def __init__(self, structure_driver=None):
         """
         Конструктор циклического двунаправленного списка
         :param head: type(self)
@@ -36,7 +43,7 @@ class LinkedList:
         self.head = None
         self.tail = None
 
-        self.__structure_driver = None
+        self.__structure_driver = structure_driver
 
     def __str__(self):
         """
@@ -83,6 +90,7 @@ class LinkedList:
             new_node.next_node = self.tail
             self.head.prev_node = ref(self.tail)
         self.size += 1
+        self.update()
 
     def insert(self, node, index=0):
         """
@@ -111,14 +119,14 @@ class LinkedList:
             self.tail.next_node = self.head.prev_node = new_node
             self.head = new_node
             self.size += 1
-        elif index > self.size-1:
+        elif index > self.size - 1:
             self.append(node)
         else:
             current_node = self.head
             next = current_node.next_node
             i = 0
-            while i < self.size-1:
-                if i+1 == index:
+            while i < self.size - 1:
+                if i + 1 == index:
                     current_node.next_node = None
                     next.prev_node = None
                     new_node = Node(current_node, next, node)
@@ -128,7 +136,11 @@ class LinkedList:
                 current_node = current_node.next_node
                 next = current_node.next_node
                 i += 1
+
+            # self.insert(node, index)
+            current_node.add_observer(self)
             self.size += 1
+        self.update()
 
     def clear(self):
         '''
@@ -137,6 +149,7 @@ class LinkedList:
         self.size = 0
         self.head = None
         self.tail = None
+        self.update()
 
     def find(self, node):
         """
@@ -158,7 +171,8 @@ class LinkedList:
 
         if len(list_i) == 1:
             return list_i[0]
-        elif len(list_i) < 1:
+        elif len(list_i) > 1:
+
             return list_i
         else:
             print("Элемент не найден")
@@ -224,6 +238,7 @@ class LinkedList:
                         sled_node = sled_node.next_node
                     i += 1
             i += 1
+        self.update()
 
     def delete(self, index):
         """
@@ -270,57 +285,60 @@ class LinkedList:
         print(self.to_dict())
 
     def load(self):
+        if self.__structure_driver is None:
+            raise ValueError
         self.from_dict(self.__structure_driver.read())
 
     def save(self):
+        if self.__structure_driver is None:
+            raise ValueError
         self.__structure_driver.write(self.to_dict())
 
     def set_structure_driver(self, driver):
+        if not isinstance(driver, IStructureDriver):
+            raise TypeError()
         self.__structure_driver = driver
+
+    def update(self):
+        print("Данные после изменения > ", flush=True)
+        print(self.__str__(), self.__len__())
+        self.save()
 
 
 if __name__ == "__main__":
-    l1 = LinkedList()
 
-    l1.insert(12, 0)
-    l1.insert(30, 0)
-    print(l1, len(l1))
+    l1 = LinkedList(JSONFileDriver("test_11.txt"))
+
+    # print(' *** Insert -->')
+    # l1.insert(12, 0)
+    # print('*** Insert -->')
+    # l1.insert(30, 0)
+
+    print('*** Append -->')
     l1.append(1)
-    print(l1, len(l1))
-    l1.append(3)
-    print(l1, len(l1))
-    l1.append(5)
-    print(l1, len(l1))
     l1.append(1)
-    print(l1, len(l1))
-    l1.insert(7, 0)
-    print(l1, len(l1))
+    # print(l1, len(l1))
+    print(l1.find(1))
 
-    # print('---')
-    # print(l1.to_dict())
+    # l1.append(3)
+    # # print(l1, len(l1))
+    # l1.append(5)
+    # # print(l1, len(l1))
+    # l1.append(1)
+    # # print(l1, len(l1))
+    #
+    # print('*** Insert -->')
+    # l1.insert(7, 0)
+    # # print(l1, len(l1))
+    #
+    #
+    # print('*** Delete -->')
+    # l1.delete(3)
+    #
+    # print('*** Remove -->')
+    # l1.remove(7)
 
-    print('--***-')
-    l1.clear()
-    print(l1, len(l1))
-
-    print('--***-')
-    # d = {0: 30, 1: 12, 2: 1, 3: 3, 4: 5, 5: 6, 6: 22}
-    l1.from_dict()
-
-    # print(l1)
-    # l1.from_dict()
-
-    # l1.set_structure_driver(JSONFileDriver('test_00.json'))
     # l1.save()
 
-    # l1.delete(6)
-    # print(l1, len(l1))
-
-    # l1.remove(12)
-    # print(l1, len(l1))
 
 
-    # print('---')
-    # l1.clear()
-    # print(l1, len(l1))
-    print('---')
