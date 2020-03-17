@@ -171,7 +171,8 @@ class LinkedList(Observer):
 
         if len(list_i) == 1:
             return list_i[0]
-        elif len(list_i) < 1:
+        elif len(list_i) > 1:
+
             return list_i
         else:
             print("Элемент не найден")
@@ -308,31 +309,34 @@ if __name__ == "__main__":
 
     l1 = LinkedList(JSONFileDriver("test_11.txt"))
 
-    print(' *** Insert -->')
-    l1.insert(12, 0)
-    print('*** Insert -->')
-    l1.insert(30, 0)
+    # print(' *** Insert -->')
+    # l1.insert(12, 0)
+    # print('*** Insert -->')
+    # l1.insert(30, 0)
 
     print('*** Append -->')
     l1.append(1)
-    # print(l1, len(l1))
-    l1.append(3)
-    # print(l1, len(l1))
-    l1.append(5)
-    # print(l1, len(l1))
     l1.append(1)
     # print(l1, len(l1))
+    print(l1.find(1))
 
-    print('*** Insert -->')
-    l1.insert(7, 0)
-    # print(l1, len(l1))
-
-
-    print('*** Delete -->')
-    l1.delete(3)
-
-    print('*** Remove -->')
-    l1.remove(7)
+    # l1.append(3)
+    # # print(l1, len(l1))
+    # l1.append(5)
+    # # print(l1, len(l1))
+    # l1.append(1)
+    # # print(l1, len(l1))
+    #
+    # print('*** Insert -->')
+    # l1.insert(7, 0)
+    # # print(l1, len(l1))
+    #
+    #
+    # print('*** Delete -->')
+    # l1.delete(3)
+    #
+    # print('*** Remove -->')
+    # l1.remove(7)
 
     # l1.save()
 

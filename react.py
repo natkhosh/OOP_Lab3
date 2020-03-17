@@ -20,7 +20,7 @@ class WeakSubject:
 
     def notify(self):
         for o in self.__o:
-            o.update(ref(o))
+            self.__o.update(ref(o))
 
 
 class Data(WeakSubject):
