@@ -23,6 +23,7 @@ class WeakSubject:
             self.__o.update(ref(o))
 
 
+
 class Data(WeakSubject):
     def __init__(self, data):
         super().__init__()  # нужно ли вызывать super?
